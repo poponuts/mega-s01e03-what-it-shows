@@ -34,7 +34,13 @@
   </tbody>
 </table>
 
+{#each split.rows as row (row.problem)}
+  {#if row.shifted}
+    <p class="note">{row.shifted} of the <code>{row.problem}</code> reports read as a one-day move (<code>shift</code>): {PROBLEMS.shift}{#if issues.shift} <a href={issues.shift}>Their ticket</a> is closed as a duplicate of the <code>{row.problem}</code> ticket.{/if}</p>
+  {/if}
+{/each}
+
 <style>
   .sum { font-size: 1.1rem; }
-  .what { color: var(--muted); font-size: 0.85em; }
+  .what, .note { color: var(--muted); font-size: 0.85em; }
 </style>

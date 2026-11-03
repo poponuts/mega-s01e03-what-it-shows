@@ -11,13 +11,13 @@ export const PROBLEMS: Record<Problem, string> = {
   shift: 'The date moves by one day, not a swap. It looks like a time-zone conversion, not the parser.',
 };
 
-// A report the desk read as a one-day move is `shift`, whatever path it came in by.
-export function problemOf(r: Report, t: Tenant | undefined, oneDayMove: readonly string[]): Problem | 'unplaced' {
-  if (oneDayMove.includes(r.id)) return 'shift';
+// The desk counts a report under its cause, even one it read as a one-day move (desk-notes.json):
+// those stay in their cause's count and are footnoted as `shift`.
+export function problemOf(r: Report, t: Tenant | undefined): Problem | 'unplaced' {
   return causeOf(r, t) ?? 'unplaced';
 }
 
-export type ProblemRow = { problem: Problem | 'unplaced'; reports: number; tenants: number; firstSeen: string; lastSeen: string };
+export type ProblemRow = { problem: Problem | 'unplaced'; reports: number; shifted: number; tenants: number; firstSeen: string; lastSeen: string };
 
 export function splitTicket(
   all: Report[],
@@ -28,13 +28,13 @@ export function splitTicket(
   const merged = uniqueById(all).filter((r) => r.mergedInto === ticket);
   const by = new Map<ProblemRow['problem'], Report[]>();
   for (const r of merged) {
-    const p = problemOf(r, tenantOf(r), oneDayMove);
+    const p = problemOf(r, tenantOf(r));
     by.set(p, [...(by.get(p) ?? []), r]);
   }
   const rows = [...by.entries()]
     .map(([problem, rs]) => {
       const days = rs.map((r) => r.receivedAt.slice(0, 10)).sort();
-      return { problem, reports: rs.length, tenants: new Set(rs.map((r) => r.tenant)).size, firstSeen: days[0], lastSeen: days[days.length - 1] };
+      return { problem, reports: rs.length, shifted: rs.filter((r) => oneDayMove.includes(r.id)).length, tenants: new Set(rs.map((r) => r.tenant)).size, firstSeen: days[0], lastSeen: days[days.length - 1] };
     })
     .sort((a, b) => b.reports - a.reports);
   return { merged: merged.length, rows };

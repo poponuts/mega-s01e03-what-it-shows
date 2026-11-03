@@ -1,6 +1,6 @@
 ---
 layout: runbook
-title: '#4471 · three problems, not one'
+title: '#4471 · two problems, not one'
 owner: poponuts
 status: open
 reviewed: 2026-11-03
@@ -16,11 +16,11 @@ signature: poponuts
 
 [#4471](/kb/incidents/4471) merged every report about wrong dates into one ticket, because
 [decision 0001](/kb/decisions/0001-dedupe-by-subject) merges on subject line alone. The reports
-describe three problems with three different fixes, so each one now has its own ticket.
+describe two problems with two different fixes, so each one now has its own ticket.
 
 <Callout kind="warn">
-The fix queued for #4471 fixes the parser. It does not touch the booking-v3 form hint or the
-one-day moves, so those reports keep coming after it ships.
+The fix queued for #4471 fixes the parser. It does not touch the booking-v3 form hint,
+so those reports keep coming after it ships.
 </Callout>
 
 ## The split
@@ -34,8 +34,9 @@ one-day moves, so those reports keep coming after it ships.
 - **hint**: the same swap, but through the booking form of a booking-v3 tenant. That form prints
   `MM/DD/YYYY` under its date field, so people type the month first, and the form reads the tenant's
   way. Fixing the parser does not fix this one; the form hint has to change.
-- **shift**: the date moves by one day ("Lisbon got Tuesday, Toronto got Monday"). That looks like a
-  time-zone conversion. The desk already reads these as one-day moves (`desk-notes.json`).
+- **shift**: a few reports describe a one-day move, not a swap ("Lisbon got Tuesday, Toronto got
+  Monday"). The desk reads them as one-day moves (`desk-notes.json`) and counts them where their
+  cause files them, under `parser`; their ticket is closed as a duplicate of the parser ticket.
 
 Read the report body and the tenant, not the intake tag: intake guesses from the reporter's
 browser, and its tag disagrees with the cause on dozens of these reports.
