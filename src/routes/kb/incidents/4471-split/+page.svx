@@ -1,0 +1,47 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: poponuts
+status: open
+reviewed: 2026-11-03
+signature: poponuts
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) merged every report about wrong dates into one ticket, because
+[decision 0001](/kb/decisions/0001-dedupe-by-subject) merges on subject line alone. The reports
+describe three problems with three different fixes, so each one now has its own ticket.
+
+<Callout kind="warn">
+The fix queued for #4471 fixes the parser. It does not touch the booking-v3 form hint or the
+one-day moves, so those reports keep coming after it ships.
+</Callout>
+
+## The split
+
+<ProblemTable ticket={4471} issues={{ parser: 'https://github.com/poponuts/mega-s01e03-what-it-shows/issues/1', hint: 'https://github.com/poponuts/mega-s01e03-what-it-shows/issues/2', shift: 'https://github.com/poponuts/mega-s01e03-what-it-shows/issues/3' }} />
+
+## How to tell them apart
+
+- **parser**: a day-first tenant, and the day and month in the report swap (7 April became 4 July).
+  The report came by app, by email, or through a booking-v2 form.
+- **hint**: the same swap, but through the booking form of a booking-v3 tenant. That form prints
+  `MM/DD/YYYY` under its date field, so people type the month first, and the form reads the tenant's
+  way. Fixing the parser does not fix this one; the form hint has to change.
+- **shift**: the date moves by one day ("Lisbon got Tuesday, Toronto got Monday"). That looks like a
+  time-zone conversion. The desk already reads these as one-day moves (`desk-notes.json`).
+
+Read the report body and the tenant, not the intake tag: intake guesses from the reporter's
+browser, and its tag disagrees with the cause on dozens of these reports.
+
+## The same data, by code path
+
+<CauseTable ticket={4471} />
+
+<RenderStamp {signature} />
