@@ -12,28 +12,21 @@ reviewed: 2026-11-07
 
 ## Ticket #4471: dates parse mm/dd in eu locales
 
-Analysis of 427 reports merged into ticket #4471 revealed three distinct problems for booking dates landing on the wrong day.
+Analysis of 427 reports merged into ticket #4471 revealed two distinct problems for booking dates landing on the wrong day.
 
 ## Problems Found
 
-### 1. Dates offset by exactly one day
-**Reports covered:** 5
+### 1. Date Parser Bug
+**Reports covered:** 385
 
-In specific situations, dates shift by exactly one day. Examples include invites arriving the day before booking, or same meeting shown as Tuesday in one timezone and Monday in another.
-
-**GitHub issue:** [Dates offset by exactly one day in specific cases](https://github.com/poponuts/mega-s01e03-what-it-shows/issues/9)
-
-### 2. Date Parser Bug (month-day swap)
-**Reports covered:** 388
-
-The date parser reads all dates as MM/DD globally, but tenants in day-first locales write dates as DD/MM. This flips the day and month.
+The date parser reads all dates as MM/DD globally, but tenants in day-first locales write dates as DD/MM. This flips the day and month. Includes 5 cases where dates shift by exactly one day (timezone or boundary edge cases).
 
 **Affected locales:** en-GB, nl-NL, cs-CZ, it-IT, and others with day-first formatting.
 
 **GitHub issue:** [Date parser reads month-first in day-first locales](https://github.com/poponuts/mega-s01e03-what-it-shows/issues/7)
 
-### 3. Booking-v3 Form Hint Bug
-**Reports covered:** 34
+### 2. Booking-v3 Form Hint Bug
+**Reports covered:** 42
 
 The booking-v3 form displays "MM/DD/YYYY" hint in day-first locales. Users follow the hint and type month-first, but the form parser expects day-first input, causing another date flip.
 
@@ -43,9 +36,8 @@ The booking-v3 form displays "MM/DD/YYYY" hint in day-first locales. Users follo
 
 ## Summary
 
-Three distinct problems cause booking dates to land on the wrong day:
-- One-day offset: 5 reports from timezone or boundary edge cases
-- Parser month-day swap: 388 reports from parser reading MM/DD in day-first locales
-- Form hint mismatch: 34 reports from booking-v3 form showing wrong hint in day-first locales
+Two distinct problems cause booking dates to land on the wrong day:
+- Parser bug: 385 reports from parser reading MM/DD in day-first locales
+- Form hint bug: 42 reports from booking-v3 form showing wrong hint in day-first locales
 
 Total reports analyzed: 427 from April to October 2026.
