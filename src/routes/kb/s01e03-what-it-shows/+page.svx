@@ -1,0 +1,43 @@
+---
+layout: runbook
+title: '#4471 analysis · S01E03 findings'
+owner: MEGA.dev student
+status: open
+reviewed: 2026-11-07
+---
+
+<script>
+  import Callout from '#lib/kb/Callout.svelte';
+</script>
+
+## Ticket #4471: dates parse mm/dd in eu locales
+
+Analysis of 427 reports merged into ticket #4471 revealed two distinct root causes for booking dates landing on the wrong day.
+
+## Problems Found
+
+### 1. Date Parser Bug
+**Reports covered:** 393
+
+The date parser reads all dates as MM/DD globally, but tenants in day-first locales write dates as DD/MM. This flips the day and month.
+
+**Affected locales:** en-GB, nl-NL, cs-CZ, it-IT, and others with day-first formatting.
+
+**GitHub issue:** [Date parser reads month-first in day-first locales](https://github.com/poponuts/mega-s01e03-what-it-shows/issues/7)
+
+### 2. Booking-v3 Form Hint Bug
+**Reports covered:** 34
+
+The booking-v3 form displays "MM/DD/YYYY" hint in day-first locales. Users follow the hint and type month-first, but the form parser expects day-first input, causing another date flip.
+
+**Affected locales:** Same day-first locales using booking-v3 form.
+
+**GitHub issue:** [Booking-v3 form hint confuses date input in day-first locales](https://github.com/poponuts/mega-s01e03-what-it-shows/issues/8)
+
+## Summary
+
+Both issues stem from a mismatch between locale expectations and how dates are parsed or hinted:
+- Parser bug: system always reads month-first
+- Hint bug: form shows month-first hint but parser expects day-first
+
+Total reports analyzed: 427 from April to October 2026.
