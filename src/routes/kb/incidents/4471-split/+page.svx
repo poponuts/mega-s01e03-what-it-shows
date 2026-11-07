@@ -3,16 +3,20 @@ layout: runbook
 title: '#4471 · two problems, not one'
 owner: poponuts
 status: open
-reviewed: 2026-11-07
+reviewed: 2026-11-03
 signature: poponuts
 ---
 
 <script>
+import ProblemTable from '#lib/kb/ProblemTable.svelte';
+import CauseTable from '#lib/kb/CauseTable.svelte';
 import Callout from '#lib/kb/Callout.svelte';
 import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
-[#4471](/kb/incidents/4471) merged every report about wrong dates into one ticket (412 reports in all). The reports describe two separate problems with two different fixes, so each one now has its own ticket.
+[#4471](/kb/incidents/4471) merged every report about wrong dates into one ticket, because
+[decision 0001](/kb/decisions/0001-dedupe-by-subject) merges on subject line alone. The reports
+describe two problems with two different fixes, so each one now has its own ticket.
 
 <Callout kind="warn">
 The fix queued for #4471 fixes the parser. It does not touch the booking-v3 form hint,
@@ -21,18 +25,24 @@ so those reports keep coming after it ships.
 
 ## The split
 
-| Problem | Reports | Issue | Cause |
-|---------|---------|-------|-------|
-| parser | 379 | [#4](https://github.com/poponuts/mega-s01e03-what-it-shows/issues/4) | Date parser reads month-first; day-first tenants' dates swap (includes 5 one-day moves) |
-| hint | 33 | [#5](https://github.com/poponuts/mega-s01e03-what-it-shows/issues/5) | booking-v3 form hint says MM/DD/YYYY; people type month-first |
-
-379 + 33 = 412, every report in #4471.
+<ProblemTable ticket={4471} issues={{ parser: 'https://github.com/poponuts/mega-s01e03-what-it-shows/issues/1', hint: 'https://github.com/poponuts/mega-s01e03-what-it-shows/issues/2', shift: 'https://github.com/poponuts/mega-s01e03-what-it-shows/issues/3' }} />
 
 ## How to tell them apart
 
-- **parser**: A day-first tenant. The day and month in the report swap (7 April became 4 July). The report came by app, by email, or through a booking-v2 form. Five of these reports describe a one-day move instead of a swap; the desk counts them under parser, and their separate ticket (#6) is closed as a duplicate of #4.
-- **hint**: The same swap, but through the booking form of a booking-v3 tenant. That form prints `MM/DD/YYYY` under its date field, so people type the month first, and the form reads the tenant's way (day-first). Fixing the parser does not fix this one; the form hint has to change.
+- **parser**: a day-first tenant, and the day and month in the report swap (7 April became 4 July).
+The report came by app, by email, or through a booking-v2 form.
+- **hint**: the same swap, but through the booking form of a booking-v3 tenant. That form prints
+`MM/DD/YYYY` under its date field, so people type the month first, and the form reads the tenant's
+way. Fixing the parser does not fix this one; the form hint has to change.
+- **shift**: a few reports describe a one-day move, not a swap ("Lisbon got Tuesday, Toronto got
+Monday"). The desk reads them as one-day moves (`desk-notes.json`) and counts them where their
+cause files them, under `parser`; their ticket is closed as a duplicate of the parser ticket.
 
-Read the report body and the tenant, not the intake tag: intake guesses from the reporter's browser, and its tag disagrees with the cause on dozens of reports.
+Read the report body and the tenant, not the intake tag: intake guesses from the reporter's
+browser, and its tag disagrees with the cause on dozens of these reports.
+
+## The same data, by code path
+
+<CauseTable ticket={4471} />
 
 <RenderStamp {signature} />
