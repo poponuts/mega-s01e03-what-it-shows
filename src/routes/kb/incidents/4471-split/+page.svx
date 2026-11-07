@@ -8,10 +8,10 @@ signature: poponuts
 ---
 
 <script>
-import ProblemTable from '#lib/kb/ProblemTable.svelte';
-import CauseTable from '#lib/kb/CauseTable.svelte';
-import Callout from '#lib/kb/Callout.svelte';
-import RenderStamp from '#lib/kb/RenderStamp.svelte';
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
 [#4471](/kb/incidents/4471) merged every report about wrong dates into one ticket, because
@@ -30,13 +30,13 @@ so those reports keep coming after it ships.
 ## How to tell them apart
 
 - **parser**: a day-first tenant, and the day and month in the report swap (7 April became 4 July).
-The report came by app, by email, or through a booking-v2 form.
+  The report came by app, by email, or through a booking-v2 form.
 - **hint**: the same swap, but through the booking form of a booking-v3 tenant. That form prints
-`MM/DD/YYYY` under its date field, so people type the month first, and the form reads the tenant's
-way. Fixing the parser does not fix this one; the form hint has to change.
+  `MM/DD/YYYY` under its date field, so people type the month first, and the form reads the tenant's
+  way. Fixing the parser does not fix this one; the form hint has to change.
 - **shift**: a few reports describe a one-day move, not a swap ("Lisbon got Tuesday, Toronto got
-Monday"). The desk reads them as one-day moves (`desk-notes.json`) and counts them where their
-cause files them, under `parser`; their ticket is closed as a duplicate of the parser ticket.
+  Monday"). The desk reads them as one-day moves (`desk-notes.json`) and counts them where their
+  cause files them, under `parser`; their ticket is closed as a duplicate of the parser ticket.
 
 Read the report body and the tenant, not the intake tag: intake guesses from the reporter's
 browser, and its tag disagrees with the cause on dozens of these reports.
